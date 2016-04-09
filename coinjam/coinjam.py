@@ -43,7 +43,7 @@ def main():
 
     for test_case in range(1, test_cases + 1):
         n, j = map(int, input().split())
-        print('Case #{}'.format(test_case))
+        print('Case #{}:'.format(test_case))
 
         jamcoins_found = 0
         for jamcoin in takewhile(lambda x: jamcoins_found < j, jamcoin_generator(n)):
