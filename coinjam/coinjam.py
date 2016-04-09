@@ -13,7 +13,8 @@ def jamcoin_generator(num_digits):
     # format string: put a 1 on beginning and end, convert int to binary, and leftpad the string
     # with the requisite amount of 0s
     format_string = '1{{:0{}b}}1'.format(num_digits)
-    return (format_string.format(x) for x in range(2 ** num_digits))
+    for x in range(2 ** num_digits):
+        yield format_string.format(x)
 
 
 def get_jamcoin_divisors(binary_string):
@@ -26,9 +27,10 @@ def get_jamcoin_divisors(binary_string):
     for base in range(2, 11):
         num = int(binary_string, base)
         # find a divisor
-        for i in range(2, sqrt(num) - 1):
-            if num % i:
+        for i in range(2, int(sqrt(num))+1):
+            if not num % i:
                 # we've found a nontrivial divisor!
+                # print('{} in base {} equals {} and has non-prime factor {}'.format(binary_string, base, num, i))
                 out.append(i)
                 break
         else:
