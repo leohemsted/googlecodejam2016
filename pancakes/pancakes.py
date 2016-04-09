@@ -1,5 +1,4 @@
 """
-
 The Infinite House of Pancakes has just introduced a new kind of pancake! It has a happy face made of chocolate chips on one side (the "happy side"), and nothing on the other side (the "blank side").
 
 You are the head waiter on duty, and the kitchen has just given you a stack of pancakes to serve to a customer. Like any good pancake server, you have X-ray pancake vision, and you can see whether each pancake in the stack has the happy side up or the blank side up. You think the customer will be happiest if every pancake is happy side up when you serve them.
@@ -18,56 +17,37 @@ Output
 
 For each test case, output one line containing Case #x: y, where x is the test case number (starting from 1) and y is the minimum number of times you will need to execute the maneuver to get all the pancakes happy side up.
 """
-from itertools import takewhile, count
+from itertools import groupby
 
-
-def flip(stack, index):
+def calculate_optimal_flips(stack):
     """
-    Flip stack up to and including current index.
-    eg: flip([T, F, F, T, T], 2) returns [T, T, F, T, T] - first three flipped + reversed, last two untouched
-    flip([F, T], 0) returns [T, T]
+    Actually straightforward - given the following:
+
+    * You can add infinite happy pancakes to the bottom of an arbitrary stack, and it'll still take
+      the same amount of flips (since you just won't bother flipping the infinite happy pancakes and
+      do the same operations to the top part.)
+    * If you have two pancakes with the same happiness next to each other, you can treat them as one
+      - there's never going to be an advantage to flipping in the middle of them - cos whatever you
+      do
+    to one you'll want to do to the other (either leave alone or flip).
+
+    With those two rules, you can do the following things:
+    * Add a single happy pancake to the end of the input string
+    * Remove all duplicates from the initial input string
+
+    The "complexity" of the stack, and with that the number of flips needed to solve it, is the
+    amount of inversions in pancake happiness throughout - so by removing all the duplicates we get
+    the length of the array - 1. We were required to add a single happy pancake to the bottom to
+    separate "-+" from "+-" - since it takes one more operation to complete that one (as given in
+    example)
     """
-    index += 1
-    stack_to_flip = stack[:index]
-
-    untouched_stack = stack[index:]
-    flipped_stack = [not x for x in reversed(stack_to_flip)]
-
-    return flipped_stack + untouched_stack
+    stack =  [x[0] for x in groupby(stack + '+')]
+    return len(stack) - 1
 
 
-def find_index_to_flip(stack):
-    """
-    Returns the index to flip at to hopefully optimally get the stack flipped. Will always return
-    """
-    # just return the bottom-most bad pancake
-    for i, pancake in reversed(list(enumerate(stack))):
-        if not pancake:
-            return i
-    raise ValueError('no point flipping a stack thats already all True!')
+test_cases = int(input())
 
+for test_case in range(1, test_cases + 1):
+    num_flips = calculate_optimal_flips(input())
 
-def make_stack_happy(stack):
-    """
-    Takes in a stack of boolean pancakes and returns the number of flips we needed to make them all True
-    """
-    i = 0
-    # lambda: keep going until all in the stack are true
-    for i in takewhile(lambda x: not all(stack), count(start=1)):
-        stack = flip(stack, find_index_to_flip(stack))
-        print(stack)
-    return i
-
-
-def main():
-    test_cases = int(input())
-
-    for test_case in range(1, test_cases + 1):
-        stack = [c == '+' for c in input()]
-        num_flips = make_stack_happy(stack)
-
-        print('Case #{}: {}'.format(test_case, num_flips))
-
-
-# main()
-print(flip([True, False], 1))
+    print('Case #{}: {}'.format(test_case, num_flips))
