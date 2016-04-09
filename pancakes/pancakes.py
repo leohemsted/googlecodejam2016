@@ -69,4 +69,5 @@ def main():
         print('Case #{}: {}'.format(test_case, num_flips))
 
 
-main()
+# main()
+print(flip([True, False], 1))
